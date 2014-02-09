@@ -23,6 +23,8 @@ connect.createServer(connect.static(__dirname + '/public')).listen(port);
 util.log('The server is running on port: ' + port);
 
 var clients = [];
+var allDocs;
+var docIndex = 40;
 
 // init socket.io
 io.set('log level', 1);
@@ -47,51 +49,59 @@ function loadDB(){
 			console.log("Nothing found");
 		}else{
 			console.log('Database loaded.');
-			loadPage(data);		
+			allDocs = data;
+			createPhantom();		
 		}
 	});	
 }
 
-var docIndex = 20;
 
-//2: Load page
-function loadPage(data){
-
-	//var pageUrl = data[0].url;
-	// var pageUrl = 'http://www1.folha.uol.com.br/cotidiano/2013/02/1224200-motoboys-bloqueiam-a-paulista-em-protesto-contra-fiscalizacao.shtml';
-	// var pageUrl = 'http://www1.folha.uol.com.br/poder/2014/02/1409488-mulher-de-pizzolato-se-irrita-com-jornalistas-ao-tentar-visitar-marido-pela-segunda-vez.shtml';
-	// var pageUrl = 'http://www1.folha.uol.com.br/poder/2014/02/1409561-lula-critica-atuacao-de-ministros-do-stf.shtml';
-	var pageUrl = 'http://www1.folha.uol.com.br/ilustrada/1253944-hollywood-vive-crise-no-setor-de-efeitos-especiais-produtora-que-levou-o-oscar-faliu.shtml';
-	//var pageUrl = data[docIndex].url;
-	console.log(pageUrl);
-
+//2: Create Phantom
+function createPhantom(){
+	console.log('Creating Phantom...');
 	phantom.create(function(ph) {
-		return ph.createPage(function(page) {
-
-			console.log('Creating Phantom.JS page...');
-
-	    	return page.open(pageUrl, function(status) {
-	    		console.log("opened site? ", status);         
-	 
-	            //Wait for a bit for AJAX content to load on the page. Here, we are waiting 1 seconds.
-	            setTimeout(function() {
-	                return page.evaluate(function() {
-
-	                    var htmlPage = $('body').html();
-	                    return htmlPage
-
-	                }, function(data) {
-	                    scrapePage(data, pageUrl);
-	                    ph.exit();
-	                });
-	            }, 2000);
-		    });
-	    });
+		loadPage(ph);
 	});
 }
 
-//3: Scrape page
-function scrapePage(pageHtml, pageUrl){
+//3: Load Page
+function loadPage(ph){
+
+	console.log('Loading page...');
+
+	var pageUrl = allDocs[docIndex].url;
+	console.log(pageUrl);
+
+		ph.createPage(function(page) {
+			
+			console.log('Creating Phantom.JS page...');
+
+	    	return page.open(pageUrl, function(status) {
+
+				console.log("opened site? ", status);
+		            
+		        if(status){
+		            setTimeout(function() {
+		                return page.evaluate(function() {
+
+		                    var htmlPage = $('body').html();
+		                    return htmlPage
+
+		                }, function(data) {
+		               		page.release();
+		               		//ph.exit();
+		                    scrapePage(data, pageUrl, ph);
+		                });
+		            }, 2000);
+		        }else{
+		        	console.log('Error evaluating page.');
+		        }
+		    });
+	    });
+}
+
+//4: Scrape page
+function scrapePage(pageHtml, pageUrl, ph){
 
 	var article = $('#news', pageHtml);
 	var content = $('.content', article);
@@ -148,11 +158,11 @@ function scrapePage(pageHtml, pageUrl){
 			console.log('No article image');
 			imageSource = '';
 		}
-		updateDoc(pageUrl, paragraphs, imageSource);
+		updateDoc(pageUrl, paragraphs, imageSource, ph);
 }
 
-//4: Update doc
-function updateDoc(pageUrl, paragraphs, imageSource){
+//5: Update doc
+function updateDoc(pageUrl, paragraphs, imageSource, ph){
 	console.log('Updating doc...');
 	db.events.findAndModify({
 	    	query: { url: pageUrl },
@@ -175,9 +185,16 @@ function updateDoc(pageUrl, paragraphs, imageSource){
 				var test = '<img src=\'' + doc.image + '\'>'
 				test += '<p>' + doc.text + '</p>';
 				io.sockets.socket(clients[clients.length - 1]).emit('write', test);
-				/*------------------------------------------------*/		    	
+				/*------------------------------------------------*/
+
+				console.log('---------- New page ----------');
+				docIndex ++;	
+				console.log(docIndex);
+				loadPage(ph);
 			}
 	});
 }
+
+
 
 
