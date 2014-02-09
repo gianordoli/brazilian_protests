@@ -3,7 +3,7 @@
 var	connect = require('connect'),
 		 fs = require('fs'),
 	   util = require('util'),
-		 io = require('socket.io').listen(9001), // WS port
+		 io = require('socket.io').listen(9001), // WS port 
 	   port = 9000, 							 // HTTP port
 	   http = require('http'),
 	   	  $ = require('jquery'),				 //jQuery
@@ -22,9 +22,14 @@ var isLoaded = false;
 connect.createServer(connect.static(__dirname + '/public')).listen(port);
 util.log('The server is running on port: ' + port);
 
+var clients = [];
+
 // init socket.io
 io.set('log level', 1);
 io.sockets.on('connection', function(socket) {
+	
+	clients.push(socket.id);
+	console.log(clients.length);
 
 	socket.on('load', function(isLoaded){
 		console.log("Request call: " + isLoaded);
@@ -96,14 +101,16 @@ function scrapePage(pageHtml, pageUrl){
 		console.log('Different template');
 		content = $('#articleNew', pageHtml);
 	}
-	
+
+	/*---------- Checking page on browser ----------*/
 	var test;
 	$(content).each(function() {
   		test += $(this).html();
 	});
-	console.log(test);
-	io.sockets.emit('write', test);
-	
+	// console.log(test);
+	io.sockets.socket(clients[0]).emit('write', test);
+	/*----------------------------------------------*/
+
 	//Text
 	var paragraphs = $('p', content).text();
 	// console.log(paragraphs);
@@ -141,12 +148,12 @@ function scrapePage(pageHtml, pageUrl){
 			console.log('No article image');
 			imageSource = '';
 		}
-		//updateDoc(pageUrl, paragraphs, imageSource);
+		updateDoc(pageUrl, paragraphs, imageSource);
 }
 
 //4: Update doc
 function updateDoc(pageUrl, paragraphs, imageSource){
-	console.log(imageSource);
+	console.log('Updating doc...');
 	db.events.findAndModify({
 	    	query: { url: pageUrl },
 	    	update: { $set: {
@@ -160,8 +167,15 @@ function updateDoc(pageUrl, paragraphs, imageSource){
 			if(err){
 				console.log('Error');
 			}else{
+				console.log('Doc succesfully updated.');
 		    	console.log(doc);
-		    	console.log('------------------------------');				
+		    	console.log('------------------------------');
+
+				/*---------- Checking scrape on browser ----------*/
+				var test = '<img src=\'' + doc.image + '\'>'
+				test += '<p>' + doc.text + '</p>';
+				io.sockets.socket(clients[clients.length - 1]).emit('write', test);
+				/*------------------------------------------------*/		    	
 			}
 	});
 }
