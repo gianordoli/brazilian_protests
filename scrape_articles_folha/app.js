@@ -91,11 +91,18 @@ function scrapePage(pageHtml, pageUrl){
 	var article = $('#news', pageHtml);
 	var content = $('.content', article);
 
-	//Página de colunistas
+	//Another template template (colunistas, ilustrada...)
 	if(article.length <= 0){
-		console.log('Colunistas');
+		console.log('Different template');
 		content = $('#articleNew', pageHtml);
 	}
+	
+	var test;
+	$(content).each(function() {
+  		test += $(this).html();
+	});
+	console.log(test);
+	io.sockets.emit('write', test);
 	
 	//Text
 	var paragraphs = $('p', content).text();
@@ -134,7 +141,7 @@ function scrapePage(pageHtml, pageUrl){
 			console.log('No article image');
 			imageSource = '';
 		}
-		updateDoc(pageUrl, paragraphs, imageSource);
+		//updateDoc(pageUrl, paragraphs, imageSource);
 }
 
 //4: Update doc
