@@ -56,7 +56,8 @@ function loadPage(data){
 	// var pageUrl = 'http://www1.folha.uol.com.br/cotidiano/2013/02/1224200-motoboys-bloqueiam-a-paulista-em-protesto-contra-fiscalizacao.shtml';
 	// var pageUrl = 'http://www1.folha.uol.com.br/poder/2014/02/1409488-mulher-de-pizzolato-se-irrita-com-jornalistas-ao-tentar-visitar-marido-pela-segunda-vez.shtml';
 	// var pageUrl = 'http://www1.folha.uol.com.br/poder/2014/02/1409561-lula-critica-atuacao-de-ministros-do-stf.shtml';
-	var pageUrl = data[docIndex].url;
+	var pageUrl = 'http://www1.folha.uol.com.br/ilustrada/1253944-hollywood-vive-crise-no-setor-de-efeitos-especiais-produtora-que-levou-o-oscar-faliu.shtml';
+	//var pageUrl = data[docIndex].url;
 	console.log(pageUrl);
 
 	phantom.create(function(ph) {
@@ -98,7 +99,7 @@ function scrapePage(pageHtml, pageUrl){
 	
 	//Text
 	var paragraphs = $('p', content).text();
-	console.log(paragraphs);
+	// console.log(paragraphs);
 
 	//Image
 	var imageSource;
@@ -112,21 +113,27 @@ function scrapePage(pageHtml, pageUrl){
 			imageSource = $(image).attr('src');
 		}else{
 			console.log('No thumbs found');
-			imageSource = $('img', content).attr('src');
+			var pageImages = $('img', content);
+			// console.log(pageImages.length);
 
-			//Checking the fyle type — prevents from storing thumbs
-			var imageType = imageSource.substr(imageSource.lastIndexOf('.') + 1, imageSource.length);
-			console.log(imageType);
-			if(imageType != 'jpeg'){
-				imageSource = '';
+			// Checking the fyle type — prevents from storing thumbs
+			for(var i = 0; i < pageImages.length; i++){
+				imageSource = $(pageImages[i], content).attr('src');
+				var imageType = imageSource.substr(imageSource.lastIndexOf('.') + 1, imageSource.length);
+				// console.log(imageType);
+				if(imageType != 'jpeg'){
+					imageSource = '';
+				}else{
+					break;
+				}
 			}
+			// console.log(imageSource);
 		}
 
 		if(imageSource == null){
 			console.log('No article image');
 			imageSource = '';
 		}
-
 		updateDoc(pageUrl, paragraphs, imageSource);
 }
 
