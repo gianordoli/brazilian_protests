@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    	<meta charset="utf-8">
+	</head>
+	<body>
+		<button>Folha</button>
+		<!-- Inserting the socket.io lybrary -->
+		<script src="socket.io.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script>
+
+
+			var socket = io.connect('http://localhost:9001');
+
+			$(document).ready(function(){
+				console.log('Called server.');
+				socket.emit('load', true);				
+			});
+
+			socket.on('write', function(data) {
+				console.log(data);
+				$('body').html(data);
+			});
+
+
+		</script>
+	</body>
+</html>

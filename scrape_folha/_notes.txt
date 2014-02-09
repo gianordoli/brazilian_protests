@@ -1,0 +1,11 @@
+NOTES
+
+Scraping results
+
+from: Folha de S. Paulo
+
+for: "protestos"
+
+filter:	none
+
+range: previous to current date

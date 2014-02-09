@@ -1,0 +1,43 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<button>Folha</button>
+		<button>Estadão</button>
+		<button>Veja</button>
+		<button>Globo</button>
+		<button>UOL</button>
+		<!-- Inserting the socket.io lybrary -->
+		<script src="http://localhost:9001/socket.io/socket.io.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script>
+
+			var socket = io.connect('http://localhost:9001');
+
+			$(document).ready(function(){
+				console.log('Called server.');
+				socket.emit('load', true);				
+			});
+
+			// var msg = 'testing';
+			// $('body').on({
+			// 	'click': function(){
+			// 		console.log('Called server.');
+			// 		socket.emit('load', msg);
+			// 	}
+			// });
+			socket.on('write', function(data) {
+				// console.log(data);
+				var resultHtml = $.parseHTML(data);
+				// $('html').html(resultHtml);
+				var p = $('p', resultHtml);
+				// $('body').html(p);
+				var news = $(p).has('span');
+				$('body').html(resultHtml);
+				
+			});
+
+			//
+		</script>
+	</body>
+</html>
