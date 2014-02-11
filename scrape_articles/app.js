@@ -185,9 +185,9 @@ function scrapeGlobo(pageHtml, pageUrl, ph){
 	}
 	/*----------------------------------------------*/
 
-	// //Text
-	// var paragraphs = $('p', content).text();
-	// // console.log(paragraphs);
+	//Text
+	var paragraphs = $('p', content).text();
+	// console.log(paragraphs);
 
 	//Image
 	var figure = $('figure', content);
@@ -195,43 +195,17 @@ function scrapeGlobo(pageHtml, pageUrl, ph){
 	var image = $('img', figure[0]);
 	// console.log(image);
 	var imageSource = $(image[0]).attr('src');
-	console.log(imageSource);
-	// var test = '<img src=\'' + imageSource + '\'>'
-	// io.sockets.socket(clients[clients.length - 1]).emit('write', test);	
-	
+	// console.log(imageSource);
 
-	// 	//Thumbs?
-	// 	if(thumbs.length > 0){
-	// 		console.log('Thumbs found');
-	// 		var imageDiv = $('.image', content);
-	// 		var image = $('img', imageDiv);
-	// 		imageSource = $(image).attr('src');
+	var test = '<img src=\'' + imageSource + '\'>'
+	test += '<p>' + paragraphs + '</p>';
+	io.sockets.socket(clients[clients.length - 1]).emit('write', test);	
 
-	// 	}else{
-	// 		console.log('No thumbs found');
-	// 		var pageImages = $('img', content);
-	// 		// console.log(pageImages.length);
-
-	// 		// Checking the fyle type — prevents from storing thumbs
-	// 		for(var i = 0; i < pageImages.length; i++){
-	// 			imageSource = $(pageImages[i], content).attr('src');
-	// 			var imageType = imageSource.substr(imageSource.lastIndexOf('.') + 1, imageSource.length);
-	// 			// console.log(imageType);
-
-	// 			if(imageType != 'jpeg' || imageSource.indexOf('colunistas') != -1){
-	// 				imageSource = '';
-	// 			}else{
-	// 				break;
-	// 			}
-	// 		}
-	// 		// console.log(imageSource);
-	// 	}
-
-	// 	if(imageSource == null){
-	// 		console.log('No article image');
-	// 		imageSource = '';
-	// 	}
-	// 	updateDoc(pageUrl, paragraphs, imageSource, ph);
+	if(imageSource == null){
+		console.log('No article image');
+		imageSource = '';
+	}
+	updateDoc(pageUrl, paragraphs, imageSource, ph);
 }
 
 //5: Update doc
