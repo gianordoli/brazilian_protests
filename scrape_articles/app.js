@@ -24,7 +24,7 @@ util.log('The server is running on port: ' + port);
 
 var clients = [];
 var allDocs;
-var docIndex = 0;
+var docIndex = 100;
 
 // init socket.io
 io.set('log level', 1);
@@ -45,7 +45,8 @@ io.sockets.on('connection', function(socket) {
 function loadDB(){
 	console.log('Loading database...');
 	// db.events.find({'company' : 'Folha de S.Paulo'}, function(err, data) {
-	db.events.find({'company' : 'O Globo'}, function(err, data) {
+	// db.events.find({'company' : 'O Globo'}, function(err, data) {
+	db.events.find(function(err, data) {		
 		if( err || !data){
 			console.log("Nothing found");
 		}else{
@@ -73,6 +74,8 @@ function loadPage(ph){
 
 	var pageUrl = allDocs[docIndex].url;
 	console.log(pageUrl);
+	var company = allDocs[docIndex].company;
+	console.log(company);
 
 		ph.createPage(function(page) {
 			
@@ -91,8 +94,14 @@ function loadPage(ph){
 
 		                }, function(data) {
 		               		page.release();
-		                    //scrapePage(data, pageUrl, ph);
-		                    scrapeGlobo(data, pageUrl, ph);
+		                    // scrapePage(data, pageUrl, ph);
+		                    // scrapeGlobo(data, pageUrl, ph);
+		                    if(company == 'O Globo'){
+		                    	scrapePageGlobo(data, pageUrl, ph);	
+		                    }
+		                    if(company == 'Folha de S.Paulo'){
+		                    	scrapePageFolha(data, pageUrl, ph);		
+		                    }		                    
 		                });
 		            }, 2000);
 		        }else{
@@ -102,8 +111,10 @@ function loadPage(ph){
 	    });
 }
 
-//4: Scrape page
-function scrapePage(pageHtml, pageUrl, ph){
+//4A: Scrape page from Folha de São Paulo
+function scrapePageFolha(pageHtml, pageUrl, ph){
+
+	console.log('Begin scraping...');	
 
 	var article = $('#news', pageHtml);
 	var content = $('.content', article);
@@ -167,7 +178,8 @@ function scrapePage(pageHtml, pageUrl, ph){
 		updateDoc(pageUrl, paragraphs, imageSource, ph);
 }
 
-function scrapeGlobo(pageHtml, pageUrl, ph){
+//4B: Scrape page from Folha de São Paulo
+function scrapePageGlobo(pageHtml, pageUrl, ph){
 
 	console.log('Begin scraping...');
 
@@ -235,7 +247,7 @@ function updateDoc(pageUrl, paragraphs, imageSource, ph){
 				/*------------------------------------------------*/
 
 				console.log('---------- New page ----------');
-				if(docIndex < 10){
+				if(docIndex < 110){
 					docIndex ++;	
 					console.log(docIndex);
 					loadPage(ph);
