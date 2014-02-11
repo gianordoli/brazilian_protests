@@ -51,8 +51,8 @@ function loadDB(){
 		}else{
 			console.log('Database loaded.');
 			allDocs = data;
-			console.log(allDocs);
-			//createPhantom();		
+			// console.log(allDocs);
+			createPhantom();		
 		}
 	});	
 }
@@ -91,8 +91,8 @@ function loadPage(ph){
 
 		                }, function(data) {
 		               		page.release();
-		               		//ph.exit();
-		                    scrapePage(data, pageUrl, ph);
+		                    //scrapePage(data, pageUrl, ph);
+		                    scrapeGlobo(data, pageUrl, ph);
 		                });
 		            }, 2000);
 		        }else{
@@ -165,6 +165,66 @@ function scrapePage(pageHtml, pageUrl, ph){
 			imageSource = '';
 		}
 		updateDoc(pageUrl, paragraphs, imageSource, ph);
+}
+
+function scrapeGlobo(pageHtml, pageUrl, ph){
+
+	console.log('Begin scraping...');
+
+	var content = $('.content', pageHtml);
+	// console.log(content);
+
+	/*---------- Checking page on browser ----------*/
+	var test;
+	$(content).each(function() {
+  		test += $(this).html();
+	});
+	// console.log(test);
+	for(var i = 0; i < clients.length; i++){
+		io.sockets.socket(clients[i]).emit('write', test);
+	}
+	/*----------------------------------------------*/
+
+	// //Text
+	// var paragraphs = $('p', content).text();
+	// // console.log(paragraphs);
+
+	// //Image
+	// var imageSource;
+	// var thumbs = $('.thumbnails', content);
+
+	// 	//Thumbs?
+	// 	if(thumbs.length > 0){
+	// 		console.log('Thumbs found');
+	// 		var imageDiv = $('.image', content);
+	// 		var image = $('img', imageDiv);
+	// 		imageSource = $(image).attr('src');
+
+	// 	}else{
+	// 		console.log('No thumbs found');
+	// 		var pageImages = $('img', content);
+	// 		// console.log(pageImages.length);
+
+	// 		// Checking the fyle type — prevents from storing thumbs
+	// 		for(var i = 0; i < pageImages.length; i++){
+	// 			imageSource = $(pageImages[i], content).attr('src');
+	// 			var imageType = imageSource.substr(imageSource.lastIndexOf('.') + 1, imageSource.length);
+	// 			// console.log(imageType);
+
+	// 			if(imageType != 'jpeg' || imageSource.indexOf('colunistas') != -1){
+	// 				imageSource = '';
+	// 			}else{
+	// 				break;
+	// 			}
+	// 		}
+	// 		// console.log(imageSource);
+	// 	}
+
+	// 	if(imageSource == null){
+	// 		console.log('No article image');
+	// 		imageSource = '';
+	// 	}
+	// 	updateDoc(pageUrl, paragraphs, imageSource, ph);
 }
 
 //5: Update doc
