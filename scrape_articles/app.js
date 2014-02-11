@@ -24,7 +24,7 @@ util.log('The server is running on port: ' + port);
 
 var clients = [];
 var allDocs;
-var docIndex = 100;
+var docIndex = 0;
 
 // init socket.io
 io.set('log level', 1);
@@ -46,6 +46,8 @@ function loadDB(){
 	console.log('Loading database...');
 	// db.events.find({'company' : 'Folha de S.Paulo'}, function(err, data) {
 	// db.events.find({'company' : 'O Globo'}, function(err, data) {
+		
+	// db.events.find({'url': 'http://www1.folha.uol.com.br/poder/1225934-mst-critica-politica-de-assentamento-de-dilma.shtml'}, function(err, data) {				
 	db.events.find(function(err, data) {		
 		if( err || !data){
 			console.log("Nothing found");
@@ -71,6 +73,14 @@ function createPhantom(){
 function loadPage(ph){
 
 	console.log('Loading page...');
+	console.log('doc index: ' + docIndex);
+	console.log('Looking for existing image');
+
+	while(typeof allDocs[docIndex].image === 'undefined'){
+		console.log('This doc has no image stored yet.')
+		console.log('doc index: ' + docIndex);
+		docIndex++;
+	}
 
 	var pageUrl = allDocs[docIndex].url;
 	console.log(pageUrl);
@@ -97,10 +107,11 @@ function loadPage(ph){
 		                    // scrapePage(data, pageUrl, ph);
 		                    // scrapeGlobo(data, pageUrl, ph);
 		                    if(company == 'O Globo'){
-		                    	scrapePageGlobo(data, pageUrl, ph);	
+		                    	scrapePageGlobo(data, pageUrl, ph);
 		                    }
-		                    if(company == 'Folha de S.Paulo'){
-		                    	scrapePageFolha(data, pageUrl, ph);		
+		                    else{
+		                    // if(company == 'Folha de S.Paulo'){
+		                    	scrapePageFolha(data, pageUrl, ph);
 		                    }		                    
 		                });
 		            }, 2000);
@@ -247,9 +258,9 @@ function updateDoc(pageUrl, paragraphs, imageSource, ph){
 				/*------------------------------------------------*/
 
 				console.log('---------- New page ----------');
-				if(docIndex < 110){
+				// if(docIndex < allDocs.length){
+				if(docIndex < allDocs.length){
 					docIndex ++;	
-					console.log(docIndex);
 					loadPage(ph);
 				}else{
 					ph.exit();

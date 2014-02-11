@@ -66,7 +66,7 @@ function loadData(){
 	console.log('--------------------------');	
 	console.log('Called search.');
 
-	var searchUrl = 'http://search.folha.com.br/search?q=protestos&site=jornal&'
+	var searchUrl = 'http://search.folha.com.br/search?q=protesto%20OR%20protestos%20OR%20manifesta%E7%E3o%20OR%20manifesta%E7%F5es&site=jornal&'
 	/* start date */	+ 'sd=' + yesterday.getDate() + '%2F' + (yesterday.getMonth() + 1) + '%2F' + yesterday.getFullYear()
 	/* end date */		+ '&ed=' + today.getDate() + '%2F' + (today.getMonth() + 1) + '%2F' + today.getFullYear() 
 	/* results start */	+ '&sr=' + nResults;																  

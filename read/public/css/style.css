@@ -1,0 +1,51 @@
+body{
+	font-family: 'Raleway', sans-serif;
+	font-weight: 400;
+	font-size: 13px;
+	color: black;
+	line-height: 16px;	
+	padding: 0;
+	border: 0;
+	margin: 20px;
+	/*background-color: rgb(255, 230, 255);*/
+}
+
+html, body {
+    width:      100%;
+    height:     100%;
+}
+
+.news{
+	width: 200px;
+	display: inline-block;
+	padding: 10px;
+	vertical-align: top;
+}
+
+.articleImage{
+	width: 200px;
+	display: inline-block;
+}
+
+.globo{
+	padding: 3px;
+	background-color: blue;
+	color: rgb(255, 230, 255);
+}
+
+.folha{
+	padding: 3px;
+	background-color: red;
+	color: rgb(255, 230, 255);
+}
+
+a{
+	text-decoration: none;
+	color: black;
+}
+
+hr{
+	height: 0px;
+	color: black;
+	border-style: dashed;
+}
