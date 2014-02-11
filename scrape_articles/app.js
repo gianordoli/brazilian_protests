@@ -189,9 +189,16 @@ function scrapeGlobo(pageHtml, pageUrl, ph){
 	// var paragraphs = $('p', content).text();
 	// // console.log(paragraphs);
 
-	// //Image
-	// var imageSource;
-	// var thumbs = $('.thumbnails', content);
+	//Image
+	var figure = $('figure', content);
+	// console.log(figure);
+	var image = $('img', figure[0]);
+	// console.log(image);
+	var imageSource = $(image[0]).attr('src');
+	console.log(imageSource);
+	// var test = '<img src=\'' + imageSource + '\'>'
+	// io.sockets.socket(clients[clients.length - 1]).emit('write', test);	
+	
 
 	// 	//Thumbs?
 	// 	if(thumbs.length > 0){
