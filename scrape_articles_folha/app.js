@@ -7,7 +7,7 @@ var	connect = require('connect'),
 	   port = 9000, 							 // HTTP port
 	   http = require('http'),
 	   	  $ = require('jquery'),				 //jQuery
-	   phantom = require('phantom');			 //Phantom JS
+	phantom = require('phantom');				 //Phantom JS
 
 
 /*----- MONGODB -----*/
@@ -24,7 +24,7 @@ util.log('The server is running on port: ' + port);
 
 var clients = [];
 var allDocs;
-var docIndex = 40;
+var docIndex = 0;
 
 // init socket.io
 io.set('log level', 1);
@@ -118,7 +118,9 @@ function scrapePage(pageHtml, pageUrl, ph){
   		test += $(this).html();
 	});
 	// console.log(test);
-	io.sockets.socket(clients[0]).emit('write', test);
+	for(var i = 0; i <= clients.length - 2; i++){
+		io.sockets.socket(clients[0]).emit('write', test);
+	}
 	/*----------------------------------------------*/
 
 	//Text
@@ -135,6 +137,7 @@ function scrapePage(pageHtml, pageUrl, ph){
 			var imageDiv = $('.image', content);
 			var image = $('img', imageDiv);
 			imageSource = $(image).attr('src');
+
 		}else{
 			console.log('No thumbs found');
 			var pageImages = $('img', content);
@@ -145,7 +148,8 @@ function scrapePage(pageHtml, pageUrl, ph){
 				imageSource = $(pageImages[i], content).attr('src');
 				var imageType = imageSource.substr(imageSource.lastIndexOf('.') + 1, imageSource.length);
 				// console.log(imageType);
-				if(imageType != 'jpeg'){
+
+				if(imageType != 'jpeg' || imageSource.indexOf('colunistas') != -1){
 					imageSource = '';
 				}else{
 					break;
@@ -178,7 +182,7 @@ function updateDoc(pageUrl, paragraphs, imageSource, ph){
 				console.log('Error');
 			}else{
 				console.log('Doc succesfully updated.');
-		    	console.log(doc);
+		    	// console.log(doc);
 		    	console.log('------------------------------');
 
 				/*---------- Checking scrape on browser ----------*/
@@ -188,9 +192,13 @@ function updateDoc(pageUrl, paragraphs, imageSource, ph){
 				/*------------------------------------------------*/
 
 				console.log('---------- New page ----------');
-				docIndex ++;	
-				console.log(docIndex);
-				loadPage(ph);
+				if(docIndex < 10){
+					docIndex ++;	
+					console.log(docIndex);
+					loadPage(ph);
+				}else{
+					ph.exit();
+				}
 			}
 	});
 }
