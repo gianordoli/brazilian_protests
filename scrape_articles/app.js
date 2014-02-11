@@ -74,10 +74,10 @@ function loadPage(ph){
 
 	console.log('Loading page...');
 	console.log('doc index: ' + docIndex);
-	console.log('Looking for existing image');
+	console.log('Checking for previous scraping...');
 
-	while(typeof allDocs[docIndex].image === 'undefined'){
-		console.log('This doc has no image stored yet.')
+	while(typeof allDocs[docIndex].image !== 'undefined'){
+		console.log('Text and image were already added to this doc.')
 		console.log('doc index: ' + docIndex);
 		docIndex++;
 	}
