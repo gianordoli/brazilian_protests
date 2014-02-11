@@ -44,13 +44,15 @@ io.sockets.on('connection', function(socket) {
 //1: Load database
 function loadDB(){
 	console.log('Loading database...');
-	db.events.find({'company' : 'Folha de S.Paulo'}, function(err, data) {
+	// db.events.find({'company' : 'Folha de S.Paulo'}, function(err, data) {
+	db.events.find({'company' : 'O Globo'}, function(err, data) {
 		if( err || !data){
 			console.log("Nothing found");
 		}else{
 			console.log('Database loaded.');
 			allDocs = data;
-			createPhantom();		
+			console.log(allDocs);
+			//createPhantom();		
 		}
 	});	
 }
