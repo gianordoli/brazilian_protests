@@ -17,12 +17,15 @@ function displayEvents(data){
 	var myHtml = '';
 	var currentDate;
 	var lastDate = new Date();
-	var offsetLeft = 0;
-	var offsetTop = 0;
-
-	var screenWidth = window.innerWidth;	
 
 	data.forEach( function(obj) {
+		currentDate = new Date(obj.date);
+
+		//Checking for line break if the date is different
+		if(		currentDate.getDate() != lastDate.getDate()){
+			console.log('line break');
+			myHtml += '<br><hr>';			
+		}
 
 		var companyClass;
 		if(obj.company == 'O Globo'){
@@ -34,14 +37,17 @@ function displayEvents(data){
 		// if(typeof obj.image === 'undefined'){
 		// 	console.log('oi');
 		// }
+		myHtml += '<div class="news">';
 		if(obj.image != '' && typeof obj.image !== 'undefined'){
-			myHtml += '<img class="articleImage" src="'+ obj.image +'"  style="left: ' + offsetLeft + 'px; top: ' + offsetTop + 'px"><br>';
-			offsetLeft += 50;
-			if(offsetLeft >= screenWidth){
-				offsetLeft = 0;
-				offsetTop += 50;
-			}
+			myHtml += '<img class="articleImage" src="'+ obj.image +'"><br>';
 		}
+		myHtml += '<span class=' + companyClass + '>'+ obj.company + '</span><br>';
+		myHtml += currentDate.getDate() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getFullYear();
+		myHtml += ' - ' + obj.section + '<br>';
+    	myHtml += '<a href=' + obj.url + '><b>' + obj.headline + '</b></a>';
+    	myHtml += '</div>';
+
+		lastDate = new Date(currentDate);
 	} );
 	
 	$('#visualization').html(myHtml);
