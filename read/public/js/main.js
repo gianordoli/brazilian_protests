@@ -33,9 +33,14 @@ function displayEvents(data){
 		}else{
 			companyClass = 'folha';
 		}
-
+		// console.log(obj.image);
+		// if(typeof obj.image === 'undefined'){
+		// 	console.log('oi');
+		// }
 		myHtml += '<div class="news">';
-		myHtml += '<img class="articleImage" src=\"'+ obj.image +'\"news"><br>';
+		if(obj.image != '' && typeof obj.image !== 'undefined'){
+			myHtml += '<img class="articleImage" src=\"'+ obj.image +'\"news"><br>';
+		}
 		myHtml += '<span class=' + companyClass + '>'+ obj.company + '</span><br>';
 		myHtml += currentDate.getDate() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getFullYear();
 		myHtml += ' - ' + obj.section + '<br>';
@@ -45,7 +50,8 @@ function displayEvents(data){
 		lastDate = new Date(currentDate);
 	} );
 	
-	$('#visualization').html(myHtml);	
+	$('#visualization').html(myHtml);
+	// console.log('done');
 }
 
 /*---------- AUXILIAR FUNCTIONS ----------*/

@@ -78,8 +78,8 @@ function loadPage(ph){
 
 	while(typeof allDocs[docIndex].image !== 'undefined'){
 		console.log('Text and image were already added to this doc.')
-		console.log('doc index: ' + docIndex);
 		docIndex++;
+		console.log('doc index: ' + docIndex);		
 	}
 
 	var pageUrl = allDocs[docIndex].url;
